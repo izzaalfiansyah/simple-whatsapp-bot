@@ -22,6 +22,21 @@ client.on("message", async (msg) => {
     msg.reply("q");
   }
 
+  if (msg.body.toLowerCase().includes("hitung")) {
+    const bilangan = msg.body
+      .toLowerCase()
+      .replace("hitung", "")
+      .replace(":", "")
+      .replace(" ", "");
+
+    try {
+      const value = eval(bilangan);
+      msg.reply(`Hasil dari ${bilangan} adalah ${value}`);
+    } catch (e) {
+      msg.reply("Bilangan tidak valid");
+    }
+  }
+
   if (msg.body == "kalimat anime dong puh") {
     const res = await http.get("/getrandom");
     const item = res.data.result[0];
