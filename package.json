@@ -1,0 +1,15 @@
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "izzaalfiansyah",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.3.6",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.22.1"
+  },
+  "scripts": {
+    "dev": "node src/index.js"
+  }
+}
