@@ -35,6 +35,29 @@ client.on("ready", () => {
   console.log("Client is ready!");
 });
 
+client.on("authenticated", (session) => {
+  sessionConfig = session;
+
+  fs.writeFile(sessionPath, JSON.stringify(session), (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+});
+
+client.on("disconnected", () => {
+  if (fs.existsSync(sessionPath)) {
+    fs.unlinkSync(sessionPath, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    client.destroy();
+    client.initialize();
+  }
+});
+
 client.on("message", async (msg) => {
   if (msg.body.toLowerCase() == "p") {
     msg.reply("q");
