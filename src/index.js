@@ -1,24 +1,34 @@
-const qrcode = require("qrcode-terminal");
-const http = require("http");
-
+const fs = require("fs");
+const qrcode = require("qrcode");
 const { Client, MessageMedia } = require("whatsapp-web.js");
-const client = new Client();
-
 const axios = require("axios");
+const express = require("express");
 
-const port = 80;
+const port = process.env.PORT || 3000;
+const app = express();
 
-const app = http
-  .createServer((req, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Its works!");
-  })
-  .listen(port);
+const sessionPath = "./session.json";
+
+let sessionConfig;
+
+if (fs.existsSync(sessionPath)) {
+  sessionConfig = require(sessionPath);
+}
+
+const client = new Client({
+  puppeteer: {},
+  session: sessionConfig,
+});
 
 client.initialize();
 
 client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+  console.log("QRCODE : ", qr);
+  qrcode.toDataURL(qr, (err, url) => {
+    app.get("/qr", (req, res) => {
+      res.send(`<img src="${url}" width="200" height="200" />`);
+    });
+  });
 });
 
 client.on("ready", () => {
@@ -26,8 +36,6 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  console.log(msg);
-
   if (msg.body.toLowerCase() == "p") {
     msg.reply("q");
   }
@@ -73,6 +81,38 @@ client.on("message", async (msg) => {
       }
     }
   }
+});
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  return res.send("I'ts works!");
+});
+
+app.post("/send", (req, res) => {
+  const phone = req.body.phone;
+  const msg = req.body.message;
+
+  client
+    .sendMessage(phone, msg)
+    .then(() => {
+      res.send({
+        success: true,
+        message: "pesan berhasil terkirim",
+      });
+    })
+    .catch((err) => {
+      res.status(400).send({
+        success: false,
+        message: "gagal mengirimkan pesan",
+        error: err,
+        client: client,
+      });
+    });
+});
+
+app.listen(port, () => {
+  console.log("Running on http://localhost:" + port);
 });
 
 module.exports = app;
