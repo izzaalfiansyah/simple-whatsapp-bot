@@ -106,6 +106,7 @@ client.on("message", async (msg) => {
         const chat = await msg.getChat();
 
         chat.sendMessage(media, { sendMediaAsSticker: true });
+        msg.delete();
       }
     }
   }
