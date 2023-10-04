@@ -1,10 +1,19 @@
 const qrcode = require("qrcode-terminal");
+const http = require("http");
 
 const { Client, MessageMedia } = require("whatsapp-web.js");
 const client = new Client();
 
 const axios = require("axios");
-const fs = require("fs");
+
+const port = 4000;
+
+const app = http
+  .createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Its works!");
+  })
+  .listen(port);
 
 client.initialize();
 
@@ -65,3 +74,5 @@ client.on("message", async (msg) => {
     }
   }
 });
+
+module.exports = app;
