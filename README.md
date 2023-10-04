@@ -1,4 +1,4 @@
-# Portfolio
+# Simple Whatsapp Bot
 
 This is about how to make simple whatsapp bot using whatsapp-web.js package
 
