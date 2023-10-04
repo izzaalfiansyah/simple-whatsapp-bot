@@ -4,6 +4,7 @@ const { Client, MessageMedia } = require("whatsapp-web.js");
 const client = new Client();
 
 const axios = require("axios");
+const fs = require("fs");
 
 client.initialize();
 
@@ -18,7 +19,7 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   console.log(msg);
 
-  if (msg.body == "p") {
+  if (msg.body.toLowerCase() == "p") {
     msg.reply("q");
   }
 
@@ -37,19 +38,30 @@ client.on("message", async (msg) => {
     }
   }
 
-  if (msg.body == "kalimat anime dong puh") {
+  if (msg.body.toLowerCase() == "kalimat anime dong puh") {
     const res = await axios.get("https://katanime.vercel.app/api/getrandom");
     const item = res.data.result[0];
 
     msg.reply(`"${item.indo}" \n ~ ${item.character} (${item.anime})`);
   }
 
-  if (msg.body == "waifu dong puh") {
+  if (msg.body.toLowerCase() == "waifu dong puh") {
     const res = await axios.get("https://api.waifu.pics/sfw/waifu");
     const imageUrl = res.data.url;
 
     const media = await MessageMedia.fromUrl(imageUrl);
 
     msg.reply(media);
+  }
+
+  if (msg.type == "image") {
+    if (msg.body == "stiker") {
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia();
+        const chat = await msg.getChat();
+
+        chat.sendMessage(media, { sendMediaAsSticker: true });
+      }
+    }
   }
 });
