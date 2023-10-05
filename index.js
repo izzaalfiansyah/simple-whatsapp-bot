@@ -100,7 +100,7 @@ client.on("message", async (msg) => {
   }
 
   if (msg.type == "image") {
-    if (msg.body == "stiker") {
+    if (msg.body.toLowerCase() == "stiker") {
       if (msg.hasMedia) {
         const media = await msg.downloadMedia();
         const chat = await msg.getChat();
